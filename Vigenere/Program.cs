@@ -6,35 +6,68 @@ namespace Vigenere
 {
     class Program
     {
+        static Dictionary<int, char> vigenere = new Dictionary<int, char>()
+        {
+            {0, 'a'},
+            {1, 'b'},
+            {2, 'c'},
+            {3, 'd'},
+            {4, 'e'},
+            {5, 'f'},
+            {6, 'g'},
+            {7, 'h'},
+            {8, 'i'},
+            { 9, 'j'},
+            {10, 'k'},
+            {11, 'l'},
+            {12, 'm'},
+            {13, 'n'},
+            {14, 'o'},
+            {15, 'p'},
+            {16, 'q'},
+            {17, 'r'},
+            {18, 's'},
+            {19, 't'},
+            {20, 'u'},
+            {21, 'v'},
+            {22, 'w'},
+            {23, 'x'},
+            {24, 'y'},
+            {25, 'z'}
+        };
+
+        static Dictionary<char, int> vigenere_reverse = new Dictionary<char, int>()
+        {
+            {'a',  0 },
+            {'b',  1 },
+            {'c',  2 },
+            {'d',  3 },
+            {'e',  4 },
+            {'f',  5 },
+            {'g',  6 },
+            {'h',  7 },
+            {'i',  8 },
+            { 'j', 9 },
+            { 'k', 10},
+            { 'l', 11},
+            { 'm', 12},
+            { 'n', 13},
+            { 'o', 14},
+            { 'p', 15},
+            { 'q', 16},
+            { 'r', 17},
+            { 's', 18},
+            { 't', 19},
+            { 'u', 20},
+            { 'v', 21},
+            { 'w', 22},
+            { 'x', 23},
+            { 'y', 24},
+            { 'z', 25}
+        };
         static void Main(string[] args)
         {
-            Dictionary<int, char> vigenere = new Dictionary<int, char>();
-            vigenere.Add(0, 'a');
-            vigenere.Add(1, 'b');
-            vigenere.Add(2, 'c');
-            vigenere.Add(3, 'd');
-            vigenere.Add(4, 'e');
-            vigenere.Add(5, 'f');
-            vigenere.Add(6, 'g');
-            vigenere.Add(7, 'h');
-            vigenere.Add(8, 'i');
-            vigenere.Add(9, 'j');
-            vigenere.Add(10, 'k');
-            vigenere.Add(11, 'l');
-            vigenere.Add(12, 'm');
-            vigenere.Add(13, 'n');
-            vigenere.Add(14, 'o');
-            vigenere.Add(15, 'p');
-            vigenere.Add(16, 'q');
-            vigenere.Add(17, 'r');
-            vigenere.Add(18, 's');
-            vigenere.Add(19, 't');
-            vigenere.Add(20, 'u');
-            vigenere.Add(21, 'v');
-            vigenere.Add(22, 'w');
-            vigenere.Add(23, 'x');
-            vigenere.Add(24, 'y');
-            vigenere.Add(25, 'z');
+
             Console.WriteLine("Enter your message");
             string message = MessCheck(Console.ReadLine());
             Console.WriteLine("Enter your key");
@@ -57,12 +90,12 @@ namespace Vigenere
             {
                 key = key.Substring(0, message.Length);
             }
-            string encrypt_mess = Vigenere_encrypt(message, key, vigenere);
-            
+            string encrypt_mess = Vigenere_encrypt(message, key);
+
             Console.WriteLine("Your encrypted message is:");
             Console.WriteLine(encrypt_mess);
             Console.WriteLine("Your decrypted message is:");
-            Console.WriteLine(Vigenere_decrypt(encrypt_mess, key, vigenere));
+            Console.WriteLine(Vigenere_decrypt(encrypt_mess, key));
         }
 
         static string MessCheck(string mess)
@@ -85,28 +118,17 @@ namespace Vigenere
                 }
             } while (mistake_counter > 0);
             return mess.ToLower();
-            
+
         }
 
-        static string Vigenere_encrypt(string message, string key, Dictionary<int, char> vigenere)
+        static string Vigenere_encrypt(string message, string key)
         {
-            
+
             string result = "";
-            
+
             for (int i = 0; i < message.Length; i++)
             {
-                int encrypt_key = 0;
-                foreach (KeyValuePair<int, char> keyValue in vigenere)
-                {
-                    if (message[i] == keyValue.Value)
-                    {
-                        encrypt_key += keyValue.Key;
-                    }
-                    if (key[i] == keyValue.Value)
-                    {
-                        encrypt_key += keyValue.Key;
-                    }
-                }
+                int encrypt_key = vigenere_reverse[message[i]] + vigenere_reverse[key[i]];
                 if (encrypt_key > 25)
                 {
                     encrypt_key -= 26;
@@ -117,33 +139,20 @@ namespace Vigenere
         }
 
 
-        static string Vigenere_decrypt(string message, string key, Dictionary<int, char> vigenere)
+        static string Vigenere_decrypt(string message, string key)
         {
-            
+
             string result = "";
             for (int i = 0; i < message.Length; i++)
             {
-                int message_number = 0;
-                int key_number = 0;
-                foreach(KeyValuePair<int, char> keyValue in vigenere)
-                {
-                    if (message[i] == keyValue.Value)
-                    {
-                       message_number = keyValue.Key;
-                    }
-                    if (key[i] == keyValue.Value)
-                    {
-                        key_number = keyValue.Key;
-                    }
-
-                }
-                int decrypt_number = (message_number - key_number) + 26;
-                if(decrypt_number > 25)
+                
+                int decrypt_number = (vigenere_reverse[message[i]] - vigenere_reverse[key[i]]) + 26;
+                if (decrypt_number > 25)
                 {
                     decrypt_number -= 26;
                 }
                 result += vigenere[decrypt_number];
-                
+
             }
             return result;
         }
