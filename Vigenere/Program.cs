@@ -80,10 +80,6 @@ namespace Vigenere
 
                     key += key[count];
                     count++;
-                    if (count == key.Length)
-                    {
-                        count = 0;
-                    }
                 }
             }
             if (key.Length > message.Length)
